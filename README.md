@@ -52,7 +52,7 @@ result.should == {
 
 Where `arg_that { true }` would literally pass any equality test. If there's *something* we want to constrain about the `created_at` value, we could do so. Perhaps a type check like `arg_that { |arg| arg.kind_of?(Time) }` would be more appropriate.
 
-The purpose of releasing something as simple as `arg-that` as a gem is to promote the intentionality about how specific any given equality assertion needs to be. The status quo seems to be to either "always specify everything exactly, but if that gets hard, specify the remainder arbitrarily." And that's not terrific.
+The purpose of releasing something as simple as `arg-that` as a gem is to promote more intentionality about how specific any given equality assertion needs to be. The modus operandi of most Rubyists seems to be "always specify everything exactly, but if that gets hard, specify the remainder arbitrarily." And that's not terrific.
 
 ## usage
 
