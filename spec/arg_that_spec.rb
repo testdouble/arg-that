@@ -10,8 +10,6 @@ end
 describe ArgThat do
 
   context "catch-all" do
-    Then { :foo.should == arg_that { true }}
-
     Then { 5.should == arg_that { true } }
     Then { 5.should_not == arg_that { false } }
   end
