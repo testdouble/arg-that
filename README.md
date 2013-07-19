@@ -19,7 +19,7 @@ Suppose our subject returns a hefty hash of attributes following a `save` operat
 subject.save #=> {:name => "Bob", :age => 28, :email => "bob@example.com" :created_at => 2013-07-18 21:40:58 -0400}
 ```
 
-While authoring the test, we neither care much about the value of `created_time`, nor do we know how to specify it exactly. That means we can't just do this:
+While authoring the test, we neither care much about the value of `created_at`, nor do we know how to specify it exactly. That means we can't just do this:
 
 ``` ruby
 result = subject.save
