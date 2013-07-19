@@ -1,4 +1,8 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in arg_that.gemspec
 gemspec
+
+group :test do
+  gem 'rspec'
+  gem 'rspec-given'
+end

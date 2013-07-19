@@ -1,5 +1,8 @@
 require "arg_that/version"
+require "arg_that/that_arg"
 
 module ArgThat
-  # Your code goes here...
+  def arg_that(&blk)
+    ThatArg.new(&blk)
+  end
 end
