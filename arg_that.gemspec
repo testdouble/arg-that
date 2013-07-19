@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = ArgThat::VERSION
   spec.authors       = ["Justin Searls"]
   spec.email         = ["searls@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{arg-that provides a simple method to create an argument matcher in equality comparisons.}
+  spec.summary       = %q{arg-that provides a simple method to create an argument matcher in equality comparisons. This is particularly handy when writing a test to assert the equality of some complex data struct with another and only one component is difficult or unwise to assert exactly.}
+  spec.homepage      = "http://github.com/testdouble/arg-that"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -19,5 +19,4 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
 end
