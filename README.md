@@ -1,5 +1,7 @@
 # arg-that
 
+[![Build Status](https://travis-ci.org/testdouble/arg-that.png?branch=master)](https://travis-ci.org/testdouble/arg-that)
+
 arg-that provides a simple method to create an argument matcher in equality comparisons. This is particularly handy when writing a test to assert the equality of some complex data struct with another and only one component is difficult or unwise to assert exactly.
 
 ## wat?
