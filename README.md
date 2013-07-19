@@ -90,10 +90,20 @@ In this way, the result will verify the two entries we want to specify exactly (
 
 ## known issues
 
-`arg_that` does you no good on symbols, as the equality check short-circuits the call to `==` on the receiver.
+So, there's sort of a massive problem with `arg_that` once you actually try to use it: the object on the left of a call to `==` is the receiver of the message, meaning that your object on the right will likely not have its `==` called unless it's in a collection or a hash and all the types are built-in.
 
-Any ideas on how to make this pass?
+The only immediately obvious to work around that is to ensure that your arg_that-containing structure is on the left, which will break the correct ordering of `should` or `expect` syntax in RSpec.
 
-``` ruby
+For example, this will fail, quizzically:
+
+```
 :foo.should == arg_that { true }
 ```
+
+The value on the right is never sent any messages, so it doesn't matter whether it's always eager to declare its equality! This will pass, however, despite the incorrect ordering:
+
+```
+arg_that { true }.should == :foo
+```
+
+And so on for more complex cases.
