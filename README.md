@@ -25,7 +25,7 @@ While authoring the test, we neither care much about the value of `created_at`, 
 
 ``` ruby
 result = subject.save
-result.should == {:name => "Bob", :age => 28, :email => "bob@example.com" :created_at => 2013-07-18 21:40:58 -0400}
+expect(result).to eq(:name => "Bob", :age => 28, :email => "bob@example.com" :created_at => Time.new(2013,7,18,21,40,58,"-04:00"))
 ```
 
 This wouldn't work, because at runtime the value of `created_at` will, of course, differ.
@@ -34,25 +34,25 @@ So, one could do this:
 
 ``` ruby
 result = subject.save
-result[:name].should == "Bob"
-result[:age].should == 28
-result[:email].should == "bob@example.com"
+expect(result[:name]).to eq("Bob")
+expect(result[:age]).to eq(28)
+expect(result[:email]).to eq("bob@example.com")
 ```
 
-But now we've got three assertions when before we had one. Alas, we no longer have a clear visual of the *shape* of the data being returned by `save`. Additionally, if the map grows with additional meaningful values in the future, this test would continue to pass by incident.
+But now we've got three assertions when before we only had one. Alas, we no longer have a clear visual of the *shape* of the data being returned by `save`. Additionally, if the map grows with additional meaningful values in the future, this test would continue to pass by incident.
 
 The `arg_that` matcher can save us this annoyance by retaining the more terse *style* of the first example, while retaining the liberal specification necessitated by the situation:
 
 ```
-result.should == {
+expect(result).to eqish(
   :name => "Bob",
   :age => 28,
   :email => "bob@example.com",
   :created_at => arg_that { true }
-}
+)
 ```
 
-Where `arg_that { true }` would literally pass any equality test. If there's *something* we want to constrain about the `created_at` value, we could do so. Perhaps a type check like `arg_that { |arg| arg.kind_of?(Time) }` would be more appropriate.
+Where `arg_that { true }` would literally pass any equality test. If there's *something* we want to constrain about the `created_at` value, we could do so. Perhaps a type check like `arg_that { |arg| arg.kind_of?(Time) }` would be more appropriate. Also, note that arg-that includes an RSpec matcher called `eqish` which is meant to be used in conjunction with the `arg_that` matcher. [Please refer to the bottom of this document for a discussion on why.]
 
 The purpose of releasing something as simple as `arg-that` as a gem is to promote more intentionality about how specific any given equality assertion needs to be. The modus operandi of most Rubyists seems to be "always specify everything exactly, but if that gets hard, specify the remainder arbitrarily." And that's not terrific.
 
@@ -79,31 +79,36 @@ result = {
   :last_audit => Time.new(2012, 8, 12)
 }
 
-result.should == {
+expect(result).to eqish(
   :zip_code => 48176,
   :owner => "Fred Jim",
   :last_audit => arg_that { |arg| arg > Time.new(2012, 1, 1) }
-}
+)
 ```
 
 In this way, the result will verify the two entries we want to specify exactly (`zip_code` and `owner`), but allows us the flexibility of only loosely specifying that we're okay with any value of `last_audit` so long as it was some time after January 1st, 2012.
 
-## known issues
+## what's up with this `eqish` matcher?
 
-So, there's sort of a massive problem with `arg_that` once you actually try to use it: the object on the left of a call to `==` is the receiver of the message, meaning that your object on the right will likely not have its `==` called unless it's in a collection or a hash and all the types are built-in.
+**tl;dr whenever you use `arg_that` in an equality RSpec expectation, always use the `eqish` matcher or otherwise ensure that `==` is being called on the object containing the `arg_that` matcher**
 
-The only immediately obvious to work around that is to ensure that your arg_that-containing structure is on the left, which will break the correct ordering of `should` or `expect` syntax in RSpec.
+As mentioned above, the reason that arg-that includes a matcher called `eqish` is because of the nature of how equality (`==`) tests work in Ruby (and most other OOP languages). The object that receives the message "are you equal?" is responsible for determining whether some other thing this equal to it.
 
-For example, this will fail, quizzically:
+This works fine in most of our programs, because in almost every circumstance, two objects of the same type will adhere to the *symmetric property of equality* contract when asked whether one equals the other.
 
+That is to say, if:
+
+``` ruby
+x = 5
+y = 5
+
+x == y #=> true
+y == x #=> true
 ```
-:foo.should == arg_that { true }
-```
 
-The value on the right is never sent any messages, so it doesn't matter whether it's always eager to declare its equality! This will pass, however, despite the incorrect ordering:
+**However**, it's the very nature of matchers like `arg_that` to *intentionally violate* the symmetric property of equality. We do this because such tests are only concerned about *partial equality*. As a result, to serve the purpose of the test, it's important that the expected value be the object who is asked "are you equal?" to the object being interrogated by the test; if the actual value is asked the question, then our definition of partial equality will never be invoked!
 
-```
-arg_that { true }.should == :foo
-```
+This is a bit of a bummer, because RSpec (and most testing libraries) will invoke `==` on the actual value, and not the expected value. Therefore, if an asymmetric definition of equality is desired, `==` must be invoked on the expected value.
 
-And so on for more complex cases.
+To work around this, arg_that includes an RSpec matcher (which is auto-defined if you include `ArgThat` in an `RSpec.configure` block) called `eqish` [source](https://github.com/testdouble/arg-that/blob/master/lib/arg_that/eqish.rb). The implementation of `eqish` is literally to swap the order of `actual == expected` to `expected == actual`. In all other matters, it delegates to RSpec's built-in `eq` matcher.
+
