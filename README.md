@@ -52,7 +52,7 @@ expect(result).to eqish(
 )
 ```
 
-Where `arg_that { true }` would literally pass any equality test. If there's *something* we want to constrain about the `created_at` value, we could do so. Perhaps a type check like `arg_that { |arg| arg.kind_of?(Time) }` would be more appropriate. Also, note that arg-that includes an RSpec matcher called `eqish` which is meant to be used in conjunction with the `arg_that` matcher. [Please refer to the bottom of this document for a discussion on why.]
+Where `arg_that { true }` would literally pass any equality test. If there's *something* we want to constrain about the `created_at` value, we could do so. Perhaps a type check like `arg_that { |arg| arg.kind_of?(Time) }` would be more appropriate. Also, note that arg-that includes an RSpec matcher called `eqish` which is meant to be used in conjunction with the `arg_that` matcher ([discussion](https://github.com/testdouble/arg-that#whats-up-with-this-eqish-matcher)).
 
 The purpose of releasing something as simple as `arg-that` as a gem is to promote more intentionality about how specific any given equality assertion needs to be. The modus operandi of most Rubyists seems to be "always specify everything exactly, but if that gets hard, specify the remainder arbitrarily." And that's not terrific.
 
