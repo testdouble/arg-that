@@ -31,6 +31,12 @@ describe ArgThat do
       Then { expect([5, 6, 1]).to_not eqish [5, 6, arg_that {|arg| arg > 1 }]}
     end
 
+    context "open structs" do
+      require 'ostruct'
+      subject { OpenStruct.new(:a => 1, :b => 2) }
+      Then { expect(subject).to eqish arg_that {|arg| arg.a == 1 }}
+    end
+
     context "hashes" do
       Then do
         expect(
