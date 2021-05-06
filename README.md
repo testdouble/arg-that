@@ -1,6 +1,6 @@
 # arg-that
 
-[![Build Status](https://travis-ci.org/testdouble/arg-that.png?branch=master)](https://travis-ci.org/testdouble/arg-that)
+[![Build Status](https://travis-ci.org/testdouble/arg-that.png?branch=main)](https://travis-ci.org/testdouble/arg-that)
 
 arg-that provides a simple method to create an argument matcher in equality comparisons. This is particularly handy when writing a test to assert the equality of some complex data struct with another and only one component is difficult or unwise to assert exactly.
 
@@ -110,5 +110,5 @@ y == x #=> true
 
 This is a bit of a bummer, because RSpec (and most testing libraries) will invoke `==` on the actual value, and not the expected value. Therefore, if an asymmetric definition of equality is desired, `==` must be invoked on the expected value.
 
-To work around this, arg_that includes an RSpec matcher (which is auto-defined if you include `ArgThat` in an `RSpec.configure` block) called `eqish` [source](https://github.com/testdouble/arg-that/blob/master/lib/arg_that/eqish.rb). The implementation of `eqish` is literally to swap the order of `actual == expected` to `expected == actual`. In all other matters, it delegates to RSpec's built-in `eq` matcher.
+To work around this, arg_that includes an RSpec matcher (which is auto-defined if you include `ArgThat` in an `RSpec.configure` block) called `eqish` [source](https://github.com/testdouble/arg-that/blob/main/lib/arg_that/eqish.rb). The implementation of `eqish` is literally to swap the order of `actual == expected` to `expected == actual`. In all other matters, it delegates to RSpec's built-in `eq` matcher.
 
